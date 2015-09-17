@@ -1,0 +1,89 @@
+/*  * { box-sizing: border-box;}*/
+
+a{ 
+    color: #640303; 
+    text-decoration: none;
+}
+.content *:first-child {margin-top: 0;}
+.content *:last-child {margin-bottom: 0;}
+ 
+/*clearfix*/
+.clearfix:before, .clearfix:after { display: table; content: ""; }
+.clearfix:after { clear: both; }
+.clearfix { zoom: 1; }
+ 
+/*tabs ul*/
+.tabs .menu_tabs ul{
+    margin: 0;
+    padding: 0;
+}
+ 
+.tabs ul{
+    margin-top: 0px;
+    margin-bottom: 0px;
+    padding: 0;
+}
+/*tabs li*/
+.tabs .menu_tabs li { 
+    position: relative; 
+    display: inline-block; 
+    margin: 1px .2em 0 0; 
+    padding: 0;
+    list-style: none; white-space: nowrap;
+}
+ 
+.tabs .menu_tabs li.active a{
+    position: relative;
+    z-index: 10;
+    margin-bottom: -1px;
+    padding-bottom: 6px;
+    background: #FFFFFF;
+    box-shadow: 0 0 8px rgba(0, 0, 0, .2);
+}
+ 
+/*tabs a*/
+.tabs .menu_tabs a{
+    display: inline-block;
+    margin-bottom: -5px;
+    padding: 5px;
+    padding-bottom: 10px;
+    border: 1px solid #DFDFDF;
+    border-bottom: none;
+    border-radius: 5px 5px 0 0;
+    background: #F3F3F3;
+}
+ 
+/*content*/
+.tabs .tabscontent {
+    position: relative;
+    display: block;
+    float: left; 
+    border: 1px solid #DFDFDF;
+    border-radius: 5px;
+    background: #FFFFFF;
+    box-shadow: 0 0 10px rgba(0, 0, 0, .2);
+}
+
+/*se agrego altura height: 550px; es una altura fija */
+.tabs .tabscontent .active{
+    position: relative;
+    z-index: 99;
+    display: inline-block;
+    border-radius: 5px;
+    background: #FFFFFF;
+    height: 550px; 
+}
+ 
+/*  antes z-index: 100; */
+/*first tab with border-radius 0*/
+.tabs .tabscontent:first-child,
+.tabs .tabscontent .active:first-child {
+    border-top-left-radius: 0;
+}
+ 
+.tabs .content{
+    padding: 20px;
+    border-style: solid;
+
+}
+
