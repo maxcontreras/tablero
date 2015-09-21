@@ -29,7 +29,7 @@ session_start();
 
 <!-- librerias para las ventas jquery  -->
 <link rel="stylesheet" href="../css/jquery-ui.css" />
-<script src="lib/jquery_ventanas/jquery.min.js" type="text/javascript"></script>
+<script src="../lib/jquery_ventanas/jquery.min.js" type="text/javascript"></script>
 <script src="../lib/jquery_ventanas/jquery-ui.min.js" type="text/javascript"></script>
 
 

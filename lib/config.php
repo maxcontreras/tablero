@@ -22,11 +22,11 @@ define("_BD_SERVIDOR","localhost");
 
 define("_BD_USUARIO","root");
 
-define("_BD_PASSWORD","root");
+define("_BD_PASSWORD","");
 
 define("_BD_NOMBREBD","localhost_tablero");
 
-define("_BD_PUERTO","8889");
+define("_BD_PUERTO","3306");
 
 
 

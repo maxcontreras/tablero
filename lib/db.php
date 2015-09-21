@@ -16,7 +16,7 @@ class Db
 
         $dsn = 'mysql:host=localhost;dbname=localhost_tablero';
         $nombre_usuario = 'root';
-        $contraseña = 'root';
+        $contraseña = '';
         $opciones = array(
             PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES utf8',
         ); 
