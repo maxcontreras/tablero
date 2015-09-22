@@ -1,5 +1,6 @@
 <?php
 @require('../lib/conexion.php');
+require_once('../lib/PHPExcel/IOFactory.php');
 
 $sql = "SELECT id_periodo,periodo,mes FROM periodo";
 $stmt = $con->prepare($sql);
@@ -23,49 +24,55 @@ if ( isset($_POST["submit"]) ) {
 	            //Store file in directory "upload" with the name of "uploaded_file.txt"
 	        	move_uploaded_file($_FILES["file"]["tmp_name"], "../upload/" . $_FILES["file"]["name"]);
 	        
-	        	$file = fopen( "../upload/".$_FILES["file"]["name"],'r');
-	        	$firstline = fgets ($file, 4096 );
-	        	$num = strlen($firstline) - strlen(str_replace(";", "", $firstline));
+	        	$inputFileName = '../upload/'.$_FILES["file"]["name"];
 
-	        	$fields = array();
-   				$fields = explode( ";", $firstline,($num+1));
+				//  Read your Excel workbook
+				try {
+				    $inputFileType = PHPExcel_IOFactory::identify($inputFileName);
+				    $objReader = PHPExcel_IOFactory::createReader($inputFileType);
+				    $objPHPExcel = $objReader->load($inputFileName);
+				} catch(Exception $e) {
+				    die('Error al cargar el archivo "'.pathinfo($inputFileName,PATHINFO_BASENAME).'": '.$e->getMessage());
+				}
 
-   				$line = array();
-    			$i = 0;
+				//  Get worksheet dimensions
+				$sheet = $objPHPExcel->getSheet(0); 
+				$highestRow = $sheet->getHighestRow(); 
+				$highestColumn = $sheet->getHighestColumn();
 
-    			while ( $line[$i] = fgets ($file, 4096) ) {
-			        $data[$i] = array();
-			        $data[$i] = explode( ";", $line[$i], ($num+1) );
-			        $i++;
-			    }
-				
+				//  Prepare database query
 				$query = "INSERT INTO calificacion_entidades 
 				(entidad,calificacion,anio,id_periodo)
 				VALUES
 				(:entidad,:calificacion,:anio,:id_periodo)";
 			    $stmt = $con->prepare($query);
-				
 
-			    foreach ($data as $key => $number) {
-			    	foreach ($number as $k => $content) {
-			    		$info = array(
-			    			':entidad'=>utf8_encode($fields[$k]),
-			    			':calificacion'=>$content,
-			    			':anio'=>$_POST["year"],
-			    			':id_periodo'=>$_POST["period"]
-			    		);
-		            	$stmt->execute($info);
+				//  Loop through each row of the worksheet in turn
+				for ($row = 1; $row <= $highestRow; $row++){ 
+				    //  Read a row of data into an array
+				    $rowData = $sheet->rangeToArray('A' . $row . ':' . $highestColumn . $row,
+				                                    NULL,
+				                                    TRUE,
+				                                    FALSE);
 
-		            	if($fields[$k] == "Jalisco"){
-		            		$query_jalisco = "INSERT INTO valores 
-							(idsecretaria,idind_secretaria,idindicador,iduser,anio_periodo,valor,id_periodo,fec_insert)
-							VALUES
-							(6,130,320,1,$_POST[year],$content,$_POST[period],CURDATE())";
-						    $stmt_jalisco = $con->prepare($query_jalisco);
-						    $stmt_jalisco->execute();
-		            	}
-		        	}
-    			}
+				    $info = array(
+		    			':entidad'=>$rowData[0][0],
+		    			':calificacion'=>$rowData[0][1],
+		    			':anio'=>$_POST["year"],
+		    			':id_periodo'=>$_POST["period"]
+		    		);
+	            	$stmt->execute($info);
+
+	            	if($rowData[0][0] == "Jalisco"){
+	            		$valor = $rowData[0][1];
+	            		$query_jalisco = "INSERT INTO valores 
+						(idsecretaria,idind_secretaria,idindicador,iduser,anio_periodo,valor,id_periodo,fec_insert)
+						VALUES
+						(6,130,320,1,$_POST[year],$valor,$_POST[period],CURDATE())";
+					    $stmt_jalisco = $con->prepare($query_jalisco);
+					    $stmt_jalisco->execute();
+	            	}
+				}
 
 				$stmt->closeCursor();
     			

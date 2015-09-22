@@ -1,8 +1,7 @@
 <?php
-require_once '../lib/parsecsv.php';
+require_once('../lib/PHPExcel.php');
 
 $estados = array(
-	array(
 	'Aguascalientes',
   	'Baja California Norte',
   	'Baja California Sur',
@@ -35,13 +34,24 @@ $estados = array(
 	'Veracruz',
 	'Yucatán',
 	'Zacatecas',
-	)
 );
 
-$fecha = Date('d-m-Y');
+$objPHPExcel = new PHPExcel();
+$fecha = date('d-m-Y');
+$nombre = "entidades_".$fecha.".xls";
 
 
-$csv = new parseCSV();
-$csv->encoding('UTF-8');
-$csv->delimiter = "\t";
-$csv->output('entidades_'.$fecha.'.csv', $estados, ',');
+foreach ($estados as $key => $estado) {
+	$key = $key+1;
+	$cell = "A$key";
+	$objPHPExcel->setActiveSheetIndex(0)->setCellValue($cell, $estado);
+}
+
+header('Content-Type: application/vnd.ms-excel');
+header('Content-Disposition: attachment;filename="'.$nombre.'"');
+header('Cache-Control: max-age=0');
+// If you're serving to IE 9, then the following may be needed
+header('Cache-Control: max-age=1');
+
+$objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel5');
+$objWriter->save('php://output');
